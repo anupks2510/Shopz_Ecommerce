@@ -1,0 +1,22 @@
+<!-- ...existing code... -->
+
+<div class="chatbot-icon" onclick="toggleChatSection()">
+    <img src="path/to/icon.png" alt="Chatbot Icon">
+</div>
+
+<div class="chat-section" id="chatSection">
+    <!-- Chat content goes here -->
+</div>
+
+<script>
+function toggleChatSection() {
+    var chatSection = document.getElementById('chatSection');
+    if (chatSection.style.display === 'none' || chatSection.style.display === '') {
+        chatSection.style.display = 'block';
+    } else {
+        chatSection.style.display = 'none';
+    }
+}
+</script>
+
+<!-- ...existing code... -->
