@@ -8,4 +8,4 @@ media/
 venv/
 .idea/
 *.sqlite3
-.env/
+.env
