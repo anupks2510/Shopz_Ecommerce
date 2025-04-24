@@ -80,3 +80,11 @@ $('.remove-cart').click(function () {
         })
 });
 
+function scrollContent(id, direction) {
+    const container = document.getElementById(id);
+    if (direction === 'left') {
+        container.scrollLeft -= 300;
+    } else {
+        container.scrollLeft += 300;
+    }
+}

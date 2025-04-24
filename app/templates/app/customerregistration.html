@@ -2,34 +2,309 @@
 {% load static %}
 {% block title %}Customer Registration{% endblock title %}
 {% block main-content %}
-<div class="container">
- <div class="row my-3">
-  <div class="col-sm-6 offset-sm-3">
-   <h3>Customer Registration</h3>
-   <hr>
-   
-   <form action="" method="post" novalidate class="shadow p-5">
-    {% if messages %}
-    {% for message in messages %}
-     <p {% if message.tags %} class="alert alert-{{message.tags}} mb-5" {% endif %}>{{message}}}</p>
-    {% endfor %}
-    {% endif %}
-     {% csrf_token %}
-     {% for fm in form %}
-      <div class="form-group mb-3">
-      {{fm.label_tag}} {{fm}} <small class="text-danger">{{fm.errors|striptags}}</small>
-      </div>
-     {% endfor %}
-     <input type="submit" value="Submit" class="btn btn-primary">
-     <br>
-     <div class="text-center text-primary fw-bold"><small>Existing User ? <a href="{% url 'login' %}" class="text-danger">Login Now</a> </small></div>
-     {% if form.non_field_errors %}
-      {% for error in form.non_field_errors %}
-       <p class="alert alert-danger my-3">{{error}}</p>
-      {% endfor %}
-     {% endif %}
-    </form>
-  </div>
- </div>
+<div class="registration-bg">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8 col-sm-10">
+                <div class="registration-wrapper animate__animated animate__fadeInDown shadow-lg rounded-5 p-5">
+                    <div class="text-center mb-5 swirling-heading">
+                        <h3 class="stylish-font fw-bold mb-3" data-swirl-text="Create Your Account">Create Your Account</h3>
+                        <p class="stylish-sub-font text-muted shimmering-text" data-shimmer-text="Join our community and start shopping!">Join our community and start shopping!</p>
+                    </div>
+                    <form action="" method="post" novalidate class="colorful-form">
+                        {% csrf_token %}
+                        {% if messages %}
+                        {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} mb-4 animated-alert" role="alert">
+                            <i class="fas fa-info-circle me-2"></i>{{ message }}
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                        {% for fm in form %}
+                        <div class="form-floating mb-4 input-fancy">
+                            {{ fm }}
+                            {{ fm.label_tag }}
+                            <span class="input-fancy-icon">
+                                {% if fm.name == 'name' %}<i class="fas fa-user"></i>
+                                {% elif fm.name == 'email' %}<i class="fas fa-envelope"></i>
+                                {% elif fm.name == 'password' %}<i class="fas fa-lock"></i>
+                                {% elif fm.name == 'confirm_password' %}<i class="fas fa-key"></i>{% endif %}
+                            </span>
+                            <small class="text-danger">{{ fm.errors|striptags }}</small>
+                            <div class="fancy-focus-border"></div>
+                        </div>
+                        {% endfor %}
+                        <button type="submit" class="btn btn-primary w-100 py-2 auth-btn position-relative pulsating-button colorful-button">
+                            <span class="btn-text stylish-font">Sign Up</span>
+                            <i class="fas fa-user-plus btn-icon"></i>
+                            <div class="button-pulse"></div>
+                        </button>
+                        <div class="text-center mt-4">
+                            <span class="text-muted stylish-font small">Already have an account?</span>
+                            <a href="{% url 'login' %}" class="text-danger register-link stylish-font fw-bold rainbow-text">Login Now</a>
+                        </div>
+                        {% if form.non_field_errors %}
+                        {% for error in form.non_field_errors %}
+                        <div class="alert alert-danger my-3 animated-alert shaking-alert" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>{{ error }}
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<style>
+.registration-bg {
+    background: linear-gradient(45deg, #ff9e9e, #fad0c4, #a18cd1, #fbc2eb);
+    background-size: 400% 400%;
+    animation: gradientAnimation 10s ease infinite;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+@keyframes gradientAnimation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.registration-wrapper {
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(156, 39, 176, 0.3); /* Purple border */
+    backdrop-filter: blur(15px);
+    animation: slideInUp 0.7s ease-out;
+}
+
+@keyframes slideInUp {
+    from { opacity: 0; transform: translateY(80px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.stylish-font {
+    font-family: 'Comfortaa', cursive;
+}
+
+.stylish-sub-font {
+    font-family: 'Nunito', sans-serif;
+    font-style: italic;
+    font-size: 1.1rem;
+}
+
+/* Swirling Heading Animation */
+.swirling-heading h3 {
+    position: relative;
+    animation: swirl 5s linear infinite alternate;
+    transform-origin: center center;
+    display: inline-block;
+}
+
+@keyframes swirl {
+    0% { transform: rotate(-2deg); }
+    100% { transform: rotate(2deg); }
+}
+
+/* Shimmering Text Animation */
+.shimmering-text {
+    position: relative;
+    color: #555;
+}
+
+.shimmering-text::before {
+    content: attr(data-shimmer-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    color: transparent;
+    background: linear-gradient(90deg, transparent, #6dd5ed, #2193b0, transparent); /* Blue shimmer */
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: shimmer 2.5s linear infinite alternate;
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+/* Colorful Form Styling */
+.colorful-form {
+    background: linear-gradient(to bottom right, #ffe0b2, #ffcc80, #ffb347, #ffa726); /* Warm orange gradient */
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.form-floating {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white for contrast */
+    margin-bottom: 1.5rem;
+}
+
+.form-floating input {
+    width: 100%;
+    height: 55px;
+    padding: 1rem 1rem 1rem 40px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    color: #333;
+    background-color: transparent;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.form-floating input:focus {
+    border-color: #f44336; /* Red focus color */
+}
+
+.form-floating label {
+    position: absolute;
+    top: 50%;
+    left: 40px;
+    transform: translateY(-50%);
+    color: #777;
+    pointer-events: none;
+    transition: top 0.3s ease, font-size 0.3s ease, color 0.3s ease;
+    background-color: transparent;
+    padding: 0 5px;
+}
+
+.form-floating input:focus + label,
+.form-floating input:not(:placeholder-shown) + label {
+    top: 10px;
+    font-size: 0.8rem;
+    color: #f44336;
+    background-color: transparent;
+}
+
+.input-fancy-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #555;
+    font-size: 1.1rem;
+    z-index: 1;
+}
+
+.fancy-focus-border {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    pointer-events: none;
+    animation: fancyFocus 2s ease-in-out infinite alternate;
+}
+
+.form-floating input:focus ~ .fancy-focus-border {
+    border-color: #f44336;
+}
+
+@keyframes fancyFocus {
+    0% { opacity: 0.6; }
+    100% { opacity: 1; }
+}
+
+/* Colorful Button */
+.colorful-button {
+    background: linear-gradient(to right, #ff6f61, #ff8f61, #f44336); /* Fiery red gradient */
+    color: white;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.25);
+}
+
+.colorful-button:hover {
+    background: linear-gradient(to right, #f44336, #ff6f61, #ff8f61);
+    transform: scale(1.03);
+}
+
+/* Pulsating Button Animation */
+.pulsating-button {
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.pulsating-button .button-pulse {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(255, 255, 255, 0.3);
+    width: 120%;
+    height: 120%;
+    border-radius: 50%;
+    opacity: 0;
+    animation: pulse 1.8s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+    50% { opacity: 0.7; transform: translate(-50%, -50%) scale(1.1); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(1.2); }
+}
+
+.pulsating-button .btn-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.1rem;
+    transition: transform 0.3s ease-in-out;
+}
+
+.pulsating-button:hover .btn-icon {
+    transform: translateY(-50%) translateX(5px);
+}
+
+/* Rainbow Text Animation */
+.rainbow-text {
+    animation: rainbow 3s linear infinite;
+    background: linear-gradient(to right, #ff6b6b, #ffa500, #ffd700, #90ee90, #6495ed, #4b0082, #ee82ee);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 700;
+}
+
+@keyframes rainbow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+
+/* Shaking Alert Animation */
+.shaking-alert {
+    animation: shake 0.8s cubic-bezier(.36,.07,.19,.97) both;
+    transform-origin: center center;
+}
+
+@keyframes shake {
+    10%, 90% { transform: translate3d(-1px, 0, 0); }
+    20%, 80% { transform: translate3d(2px, 0, 0); }
+    30%, 50%, 70% { transform: translate3d(-3px, 0, 0); }
+    40%, 60% { transform: translate3d(3px, 0, 0); }
+}
+
+.animated-alert {
+    animation-duration: 0.5s;
+}
+</style>
+
+<script>
+    // Optional: Add JavaScript for more complex interactions if needed
+</script>
 {% endblock main-content %}

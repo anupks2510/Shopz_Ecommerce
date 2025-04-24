@@ -33,3 +33,5 @@ class OrderPlacedModelAdmin(admin.ModelAdmin):
   link = reverse("admin:app_customer_change", args=[obj.customer.pk])
   return format_html('<a href="{}">{}</a>', link, obj.customer.name)
  
+
+

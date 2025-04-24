@@ -2,46 +2,436 @@
 {% load static %}
 {% block title %}Product Detail{% endblock title %}
 {% block main-content %}
+<style>
+    /* Base Styles */
+    .product-card {
+        background: #ffffff;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+        overflow: hidden;
+    }
+
+    .product-card:hover {
+        transform: translateY(-5px);
+    }
+
+    /* Image Styles */
+    .main-product-image {
+        border-radius: 15px;
+        transition: transform 0.3s ease;
+        cursor: zoom-in;
+    }
+
+    .thumb-preview {
+        width: 80px;
+        height: 80px;
+        border-radius: 10px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+
+    .thumb-preview:hover {
+        transform: scale(1.05);
+    }
+
+    /* Price Styles */
+    .price-tag {
+        background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+        color: white;
+        padding: 8px 20px;
+        border-radius: 30px;
+        display: inline-block;
+    }
+
+    .discount-badge {
+        background: #4ecdc4;
+        color: white;
+        padding: 5px 15px;
+        border-radius: 15px;
+        font-size: 0.9rem;
+    }
+
+    /* Rating Styles */
+    .rating-stars {
+        color: #ffd700;
+        font-size: 1.2rem;
+    }
+
+    .rating-stars .far {
+        color: #ddd;
+    }
+
+    /* Review Styles */
+    .review-card {
+        background: rgba(255,255,255,0.9);
+        border-radius: 10px;
+        transition: transform 0.3s ease;
+    }
+
+    .review-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .user-avatar {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    /* Specifications Table */
+    .specs-table td {
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+    }
+
+    /* Related Products */
+    .related-product-card {
+        transition: transform 0.3s ease;
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    .related-product-card:hover {
+        transform: translateY(-5px);
+    }
+
+    /* Action Buttons */
+    .action-btn {
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .action-btn:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        transition: 0.5s;
+    }
+
+    .action-btn:hover:before {
+        left: 100%;
+    }
+</style>
+
 <div class="container my-5">
- <div class="row">
-  <div class="col-sm-6 text-center align-self-center">
-   <img src="{{product.product_image.url}}" alt="" class="img-fluid img-thumbnail">
-  </div>
-  <div class="col-sm-5 offset-sm-1">
-   <h2>{{product.title}}</h2>
-   <hr>
-   <p>{{product.description}}</p> <br>
-   <h4>Rs. {{product.discounted_price}} <small class="fw-light text-decoration-line-through">{{product.selling_price}}</small></h4> <br>
+    <!-- Main Product Section -->
+    <div class="product-card p-4">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="position-relative">
+                    <span class="discount-badge">Save ₹{{ product.selling_price|floatformat:0|add:"-3000" }}</span>
+                    <img src="{{ product.product_image.url }}" 
+                         class="main-product-image img-fluid w-100"
+                         data-bs-toggle="modal" 
+                         data-bs-target="#imageZoomModal">
+                </div>
+                <div class="d-flex mt-3 gap-2">
+                    <div class="thumb-preview">
+                        <img src="{{ product.product_image.url }}" 
+                             class="img-fluid h-100 w-100"
+                             onclick="changeMainImage(this)">
+                    </div>
+                    <!-- Add more thumbnails here -->
+                </div>
+            </div>
 
-   {% if user.is_authenticated  %}
-    {% if item_already_in_cart  %}
-     <a href="{% url 'showcart' %}" class="btn btn-warning shadow px-5 py-2 ms-4">Go to Cart</a>
-    {% else %}
-     <form action="/add-to-cart" class="d-inline">
-      <input type="hidden" name="prod_id" value="{{product.id}}" id="prod_id">
-      <button type="submit" class="btn btn-primary shadow px-5 py-2">Add to Cart</button>
-     </form>
-    {% endif %}
-   {% endif %}
+            <div class="col-lg-5 offset-lg-1 mt-4 mt-lg-0">
+                <h1 class="h2 fw-bold mb-3">{{ product.title }}</h1>
+                
+                <!-- Rating Summary -->
+                <div class="d-flex align-items-center mb-3">
+                    <div class="rating-stars me-2">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <span class="text-muted">(1,234 ratings)</span>
+                </div>
 
-   {% if not request.user.is_authenticated %}
-     <form action="/add-to-cart" class="d-inline">
-      <input type="hidden" name="prod_id" value="{{product.id}}" id="prod_id">
-      <button type="submit" class="btn btn-primary shadow px-5 py-2">Add to Cart</button>
-     </form>
-   {% endif %}
+                <!-- Pricing -->
+                <div class="d-flex align-items-center mb-4">
+                    <div class="price-tag">
+                        <h4 class="mb-0">₹{{ product.discounted_price }}</h4>
+                        <small class="text-decoration-line-through">₹{{ product.selling_price }}</small>
+                    </div>
+                    <span class="ms-3 text-success">({{ product.get_discount_percent|floatformat:0 }}% OFF)</span>
+                </div>
 
+                <!-- Action Buttons -->
+                <div class="d-flex gap-3 mb-5">
+                    {% if user.is_authenticated %}
+                        {% if item_already_in_cart %}
+                            <a href="{% url 'showcart' %}" 
+                               class="btn btn-warning action-btn px-5 py-3">
+                                <i class="fas fa-shopping-cart me-2"></i>View Cart
+                            </a>
+                        {% else %}
+                            <form action="/add-to-cart" class="d-inline">
+                                <input type="hidden" name="prod_id" value="{{ product.id }}">
+                                <button type="submit" 
+                                        class="btn btn-primary action-btn px-5 py-3">
+                                    <i class="fas fa-cart-plus me-2"></i>Add to Cart
+                                </button>
+                            </form>
+                        {% endif %}
+                    {% else %}
+                        <form action="/add-to-cart" class="d-inline">
+                            <input type="hidden" name="prod_id" value="{{ product.id }}">
+                            <button type="submit" 
+                                    class="btn btn-primary action-btn px-5 py-3">
+                                <i class="fas fa-cart-plus me-2"></i>Add to Cart
+                            </button>
+                        </form>
+                    {% endif %}
+                    <a href="{% url 'checkout' %}" 
+                       class="btn btn-danger action-btn px-5 py-3">
+                        <i class="fas fa-bolt me-2"></i>Buy Now
+                    </a>
+                </div>
 
+                <!-- Product Highlights -->
+                <div class="mb-5">
+                    <h5 class="fw-bold mb-4"><i class="fas fa-bolt me-2 text-warning"></i>Key Features</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <ul class="list-unstyled">
+                                <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i>Premium Quality Materials</li>
+                                <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i>2-Year Warranty</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <ul class="list-unstyled">
+                                <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i>Free Shipping</li>
+                                <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i>Easy Returns</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
 
-   <a href="{% url 'checkout' %}" class="btn btn-danger shadow px-5 py-2 ms-4">Buy Now</a>
-   <h5 class="mt-5">Available Offers</h5>
-   <ul>
-    <li>Bank Offer 5% Unlimited Cashback on Flipkart Axis Bank Credit</li>
-    <li>Special Price Get extra ₹3000 off (price inclusive of discount)</li>
-    <li>No cost EMI ₹1,667/month. Standard EMI also available</li>
-    <li>Partner Offer ₹2000 Flipkart Gift Card on Every 1000th Transaction with a new Visa Debit/Credit Card</li>
-   </ul>
-  </div>
- </div>
+                <!-- Offers -->
+                <div class="mb-5">
+                    <h5 class="fw-bold mb-4"><i class="fas fa-gift me-2 text-primary"></i>Available Offers</h5>
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <div class="bg-light p-3 rounded">
+                                <i class="fas fa-credit-card me-3 text-primary"></i>
+                                <span>5% Unlimited Cashback on Flipkart Axis Bank Credit</span>
+                            </div>
+                        </div>
+                        <!-- Add more offers -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ratings & Reviews Section -->
+    <div class="product-card mt-5 p-4">
+        <h3 class="mb-4">Customer Reviews</h3>
+        <div class="row g-4">
+            <!-- Fake Reviews -->
+            <div class="col-md-6">
+                <div class="review-card p-3 shadow-sm">
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="https://randomuser.me/api/portraits/men/1.jpg" class="user-avatar me-3">
+                        <div>
+                            <h5 class="mb-0">Rishi S.</h5>
+                            <div class="rating-stars small">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="mb-0">Absolutely love this product! Exceeded my expectations.</p>
+                    <small class="text-muted">Posted on March 15, 2023</small>
+                </div>
+            </div>
+
+            <!-- More fake reviews -->
+            <div class="col-md-6">
+                <div class="review-card p-3 shadow-sm">
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="https://randomuser.me/api/portraits/women/2.jpg" class="user-avatar me-3">
+                        <div>
+                            <h5 class="mb-0">Sarah M.</h5>
+                            <div class="rating-stars small">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="mb-0">Good product, but delivery took longer than expected.</p>
+                    <small class="text-muted">Posted on April 2, 2023</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Review Form -->
+        <div class="mt-5">
+            <h4>Write a Review</h4>
+            <form id="reviewForm" class="mt-4">
+                <div class="mb-3">
+                    <div class="rating-stars" id="ratingInput">
+                        <i class="far fa-star" data-rating="1"></i>
+                        <i class="far fa-star" data-rating="2"></i>
+                        <i class="far fa-star" data-rating="3"></i>
+                        <i class="far fa-star" data-rating="4"></i>
+                        <i class="far fa-star" data-rating="5"></i>
+                    </div>
+                </div>
+                <textarea class="form-control mb-3" rows="3" 
+                          placeholder="Share your experience..."></textarea>
+                <button type="submit" class="btn btn-primary px-4">
+                    <i class="fas fa-paper-plane me-2"></i>Submit Review
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Specifications Section -->
+    <div class="product-card mt-5 p-4">
+        <h3 class="mb-4">Product Specifications</h3>
+        <div class="table-responsive">
+            <table class="table specs-table">
+                <tbody>
+                    <tr>
+                        <td class="fw-bold">Brand</td>
+                        <td>PremiumTech</td>
+                        <td class="fw-bold">Warranty</td>
+                        <td>2 Years</td>
+                    </tr>
+                    <!-- Add more specifications -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+ <!-- Related Products -->
+<div class="product-card mt-5 p-4">
+    <h3 class="mb-4">Frequently Bought Together</h3>
+    <div class="row g-4">
+        <!-- Product 1 -->
+        <div class="col-md-4">
+            <div class="related-product-card text-center p-3 shadow-sm">
+                <img src="{% static 'app/images/related1.jpeg' %}" 
+                     class="img-fluid mb-3"
+                     style="height: 200px; object-fit: contain;">
+                <h5>Wireless Headphones</h5>
+                <div class="rating-stars small mb-2">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="far fa-star"></i>
+                </div>
+                <p class="text-primary fw-bold">₹8,499</p>
+                <button class="btn btn-outline-primary btn-sm">Add to Cart</button>
+            </div>
+        </div>
+
+        <!-- Product 2 -->
+        <div class="col-md-4">
+            <div class="related-product-card text-center p-3 shadow-sm">
+                <img src="{% static 'app/images/related2.jpg' %}" 
+                     class="img-fluid mb-3"
+                     style="height: 200px; object-fit: contain;">
+                <h5>Mobile Covers</h5>
+                <div class="rating-stars small mb-2">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star-half-alt"></i>
+                    <i class="far fa-star"></i>
+                </div>
+                <p class="text-primary fw-bold">₹299</p>
+                <button class="btn btn-outline-primary btn-sm">Add to Cart</button>
+            </div>
+        </div>
+
+        <!-- Product 3 -->
+        <div class="col-md-4">
+            <div class="related-product-card text-center p-3 shadow-sm">
+                <img src="{% static 'app/images/related3.jpeg' %}" 
+                     class="img-fluid mb-3"
+                     style="height: 200px; object-fit: contain;">
+                <h5>Cameras</h5>
+                <div class="rating-stars small mb-2">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <p class="text-primary fw-bold">₹21,999</p>
+                <button class="btn btn-outline-primary btn-sm">Add to Cart</button>
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- Image Zoom Modal -->
+<div class="modal fade" id="imageZoomModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content border-0">
+            <img src="{{ product.product_image.url }}" class="img-fluid">
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script>
+    // Rating Input
+    document.querySelectorAll('#ratingInput .fa-star').forEach(star => {
+        star.addEventListener('click', function() {
+            const rating = parseInt(this.dataset.rating);
+            document.querySelectorAll('#ratingInput .fa-star').forEach((s, index) => {
+                s.classList.toggle('fas', index < rating);
+                s.classList.toggle('far', index >= rating);
+            });
+        });
+    });
+
+    // Review Form Submission
+    document.getElementById('reviewForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        alert('Thank you for your review! (Demo: Review not actually submitted)');
+        this.reset();
+        document.querySelectorAll('#ratingInput .fa-star').forEach(star => {
+            star.classList.remove('fas');
+            star.classList.add('far');
+        });
+    });
+
+    // Image Zoom
+    document.querySelector('.main-product-image').addEventListener('click', function() {
+        new bootstrap.Modal(document.getElementById('imageZoomModal')).show();
+    });
+
+    // Add to Cart Animation
+    document.querySelectorAll('.action-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => this.style.transform = '', 200);
+        });
+    });
+</script>
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 {% endblock main-content %}

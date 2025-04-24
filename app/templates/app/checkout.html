@@ -1,84 +1,542 @@
 {% extends 'app/base.html' %}
 {% load static %}
 {% block title %}Checkout{% endblock title %}
+
+{% block extra-head %}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  :root {
+    --primary-color: #2a9d8f;
+    --secondary-color: #264653;
+    --accent-color: #e9c46a;
+    --text-dark: #2a5d53;
+    --text-light: #8b8c89;
+    --bg-light: #f4f7f6; /* Light background for the page */
+    --card-bg: #ffffff;
+    --border-color: #e0e0e0;
+    --shadow-color: rgba(0, 0, 0, 0.08);
+  }
+
+  body {
+    background: var(--bg-light);
+    min-height: 100vh;
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .container.py-5 {
+    max-width: 1200px;
+    margin: 2rem auto; /* Added top and bottom margin for better spacing */
+    padding: 2rem 1rem;
+    flex-grow: 1; /* Allows container to take up available vertical space */
+  }
+
+  /* Order Summary Section */
+  .order-summary {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 24px var(--shadow-color);
+    border: 1px solid rgba(42, 157, 143, 0.12); /* Slightly stronger border */
+  }
+
+  .order-summary .card {
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: var(--card-bg);
+    margin-bottom: 1rem;
+  }
+
+  .order-summary .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(42, 157, 143, 0.08);
+    border-color: var(--primary-color);
+  }
+
+  /* Payment Container */
+  .payment-container {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 24px var(--shadow-color);
+    border: 1px solid rgba(42, 157, 143, 0.12); /* Slightly stronger border */
+  }
+
+  /* Payment Methods */
+  .payment-method {
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    margin-bottom: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+  }
+
+  .payment-method::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 6px; /* Slightly thicker accent line */
+    height: 100%;
+    background: var(--primary-color);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .payment-method:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(42, 157, 143, 0.08);
+    border-color: var(--primary-color);
+  }
+
+  .payment-method:hover::before {
+    opacity: 1;
+  }
+
+  /* Razorpay Specific Styling */
+  .razorpay-method {
+    background: linear-gradient(135deg, rgba(42, 157, 143, 0.04) 0%, var(--card-bg) 100%); /* Slightly more prominent background */
+    border-color: rgba(42, 157, 143, 0.2); /* Slightly stronger border */
+  }
+
+  .razorpay-method .payment-icon {
+    background: rgba(42, 157, 143, 0.15); /* Slightly darker background */
+    color: var(--primary-color);
+  }
+
+  /* PayPal Specific Styling */
+  .paypal-method {
+    background: linear-gradient(135deg, rgba(0, 48, 135, 0.04) 0%, var(--card-bg) 100%); /* Slightly more prominent background */
+  }
+
+  .paypal-method .payment-icon {
+    background: rgba(0, 48, 135, 0.15); /* Slightly darker background */
+    color: #003087;
+  }
+
+  /* Payment Icons */
+  .payment-icon {
+    font-size: 1.5rem; /* Slightly larger icons */
+    width: 50px; /* Slightly larger icon container */
+    height: 50px; /* Slightly larger icon container */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1.5rem; /* Slightly more spacing */
+    border-radius: 10px;
+    transition: all 0.3s ease;
+  }
+
+  .razorpay-logo {
+    height: 22px; /* Slightly larger logo */
+    width: auto;
+    margin-left: auto;
+    filter: drop-shadow(0 2px 4px rgba(42, 157, 143, 0.1));
+  }
+
+  /* Address Cards */
+  .address-card .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+  }
+
+  .address-card .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(42, 157, 143, 0.06);
+    border-color: var(--primary-color);
+  }
+
+  /* Typography */
+  h3 {
+    font-weight: 600;
+    color: var(--text-dark);
+    letter-spacing: -0.75px; /* Slightly tighter letter spacing */
+    margin-bottom: 1.75rem; /* Slightly more margin */
+  }
+
+  h5 {
+    font-weight: 500;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem; /* Added some bottom margin */
+  }
+
+  .text-muted {
+    color: var(--text-light) !important;
+    font-size: 0.9rem; /* Slightly smaller muted text */
+  }
+
+  /* Total Cost */
+  .total-cost h4 {
+    color: var(--secondary-color);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Terms and Conditions */
+  .terms {
+    background: rgba(42, 157, 143, 0.03); /* Light background for terms */
+    border: 1px solid rgba(42, 157, 143, 0.1);
+    border-radius: 10px;
+  }
+
+  .terms h5 {
+    color: var(--primary-color);
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .terms ul li {
+    margin-bottom: 0.75rem;
+    color: var(--text-dark);
+    font-size: 0.9rem;
+  }
+
+  /* Loading Overlay */
+  .loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9); /* Slightly less opaque */
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .spinner {
+    width: 60px; /* Slightly larger spinner */
+    height: 60px; /* Slightly larger spinner */
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  /* Animations */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* Recommended Badge */
+  .recommended-badge {
+    position: absolute;
+    top: -12px; /* Adjusted position */
+    right: -12px; /* Adjusted position */
+    background: var(--primary-color);
+    color: white;
+    padding: 8px 16px; /* Slightly larger badge */
+    border-radius: 25px; /* More rounded */
+    font-size: 0.8rem;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(42, 157, 143, 0.2);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+    }
+
+    50% {
+      transform: scale(1.08); /* Slightly larger pulse */
+    }
+
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  /* Security Info */
+  .security-info {
+    border-top: 1px solid var(--border-color);
+    padding-top: 1.5rem;
+    margin-top: 2rem;
+  }
+
+  .security-info small {
+    font-size: 0.85rem;
+    color: var(--text-light);
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .container.py-5 {
+      padding: 1.5rem;
+    }
+
+    .payment-icon {
+      width: 45px;
+      height: 45px;
+      font-size: 1.3rem;
+      margin-right: 1rem;
+    }
+
+    .razorpay-logo {
+      height: 20px;
+    }
+
+    .payment-container,
+    .order-summary {
+      padding: 1.5rem;
+    }
+
+    .payment-method {
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .recommended-badge {
+      right: -8px;
+      padding: 5px 12px;
+      font-size: 0.7rem;
+    }
+
+    h3 {
+      font-size: 1.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    h5 {
+      font-size: 1.1rem;
+    }
+  }
+</style>
+{% endblock %}
+
 {% block main-content %}
-<div class="container">
- <div class="row mt-5">
-  <div class="col-sm-6">
-    <h4>Order Summary</h4>
-    <hr>
-    {% for item in cart_items %}
-      <div class="card mb-2">
-        <div class="card-body">
-          <h5>Product: {{item.product.title}}</h5>
-          <p>Quantity: {{item.quantity}}</p>
-          <p class="fw-bold">Price: {{item.total_cost}}</p>
+<div class="container py-5">
+  <div class="row g-4">
+    <div class="col-lg-6">
+      <div class="order-summary">
+        <h3>Order Summary</h3>
+        {% for item in cart_items %}
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h5 class="card-title">{{ item.product.title }}</h5>
+                <p class="text-muted mb-0">Quantity: {{ item.quantity }}</p>
+              </div>
+              <h5 class="text-primary">₹{{ item.total_cost }}</h5>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+        <div class="total-cost text-end mt-4">
+          <h4>Total: ₹{{ totalcost }}</h4>
+          <small class="text-muted">(Including all taxes and delivery charges)</small>
+        </div>
+
+        <div class="terms mt-4 p-3 rounded">
+          <h5 class="mb-3">Terms & Conditions</h5>
+          <ul class="list-unstyled">
+            <li class="mb-2">✓ All prices inclusive of GST</li>
+            <li class="mb-2">✓ 3-7 business day delivery</li>
+            <li class="mb-2">✓ 14-day return policy</li>
+            <li class="mb-2">✓ Secure SSL encrypted payment</li>
+          </ul>
         </div>
       </div>
-    {% endfor %}
-    <p class="fw-bold">Total Cost + Rs. 70  = {{totalcost}}</p>
-    <small>(Rs. 70 Delivery Charge)</small> <hr>
-    <small>Term and Condition: Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia, ullam saepe! Iure optio repellat dolor velit, minus rem. Facilis cumque neque numquam laboriosam, accusantium adipisci nisi nihil in et quis?</small>
-  </div>
-  <div class="col-sm-4 offset-sm-1">
-    <h4>Select Shipping Address</h4>
-    <hr>
-    <form action="/paymentdone" id="myform">
-    {% for ad in add %}
-      <div class="card">
-        <div class="card-body">
-        <h5>{{ad.name}}</h5>
-        <p>{{ad.locality}}, {{ad.city}}, {{ad.state}}- {{ad.zipcode}}</p>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="payment-container">
+        <h3>Checkout Details</h3>
+
+        <div class="address-section mb-4">
+          <h5 class="mb-3">Select Address</h5>
+          <form action="/paymentdone" id="myform">
+            {% for ad in add %}
+            <div class="address-card">
+              <div class="card">
+                <div class="card-body">
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="custid" id="custadd{{forloop.counter}}"
+                      value="{{ad.id}}" {% if forloop.first %}checked{% endif %}>
+                    <label class="form-check-label" for="custadd{{forloop.counter}}">
+                      <h5 class="mb-1">{{ ad.name }}</h5>
+                      <p class="text-muted mb-0">{{ ad.locality }}, {{ ad.city }}</p>
+                      <p class="text-muted mb-0">{{ ad.state }} - {{ ad.zipcode }}</p>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </form>
+        </div>
+
+        <div class="payment-options">
+          <h3 class="mb-4">Payment Method</h3>
+
+          <div class="payment-method razorpay-method" id="razorpay-option">
+            <span class="recommended-badge">Recommended</span>
+            <div class="d-flex align-items-center">
+              <i class="payment-icon fas fa-bolt"></i>
+              <div class="flex-grow-1">
+                <div class="d-flex align-items-center">
+                  <div>
+                    <h5 class="mb-1">Instant Payment</h5>
+                    <small class="text-muted">Secure payment with Razorpay</small>
+                  </div>
+                  <img src="https://razorpay.com/assets/razorpay-logo.svg" class="razorpay-logo" alt="Razorpay">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="payment-method paypal-method">
+            <div class="d-flex align-items-center">
+              <i class="payment-icon fab fa-paypal"></i>
+              <div class="flex-grow-1">
+                <div class="d-flex align-items-center">
+                  <div>
+                    <h5 class="mb-1">International Payment</h5>
+                    <small class="text-muted">Pay with PayPal</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div id="paypal-button-container" class="mt-3"></div>
+          </div>
+        </div>
+
+        <div class="security-info text-center mt-4 pt-3">
+          <small class="text-muted">
+            <i class="fas fa-lock me-2"></i>
+            256-bit SSL Secured Payment
+          </small>
         </div>
       </div>
-        <div class="form-check mt-2 mb-5">
-          <input class="form-check-input" type="radio" name="custid" id="custadd{{forloop.counter}}" value="{{ad.id}}" checked>
-          <label class="form-check-label fw-bold" for="custadd{{forloop.counter}}">
-            Address: {{ forloop.counter }} </label>
-        </div>
-      {% endfor %}
-        <div class="border p-3">
-          {% comment %} <button type="submit" class="btn btn-warning mt-3 px-5 fw-bold" id="continuebtn">Continue</button> {% endcomment %}
-          <!-- Set up a container element for the button -->
-          <p class="fw-bold">Payment Options:</p>
-          <div id="paypal-button-container"></div>
-        </div>
-      </form>
     </div>
   </div>
 </div>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+</div>
 {% endblock main-content %}
 
-{% block payment-gateway %} 
- <!-- Include the PayPal JavaScript SDK -->
-    <script src="https://www.paypal.com/sdk/js?client-id=sb&currency=USD"></script>
+{% block payment-gateway %}
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://www.paypal.com/sdk/js?client-id=sb&currency=USD"></script>
 
-    <script>
-        // Render the PayPal button into #paypal-button-container
-        paypal.Buttons({
+<script>
+  // Payment Handling
+  function showLoading() {
+    document.getElementById('loadingOverlay').style.display = 'flex';
+  }
 
-            // Set up the transaction
-            createOrder: function(data, actions) {
-                return actions.order.create({
-                    purchase_units: [{
-                        amount: {
-                            value: '{{totalcost}}'
-                        }
-                    }]
-                });
-            },
+  function hideLoading() {
+    document.getElementById('loadingOverlay').style.display = 'none';
+  }
 
-            // Finalize the transaction
-            onApprove: function(data, actions) {
-                return actions.order.capture().then(function(details) {
-                    // Show a success message to the buyer
-                    alert('Transaction completed by ' + details.payer.name.given_name + '!');
-                    document.getElementById("myform").submit()
-                });
-            }
+  // Razorpay Integration
+  document.getElementById('razorpay-option').addEventListener('click', async () => {
+    showLoading();
+    try {
+      const response = await fetch("/create-razorpay-order/", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({
+          amount: {{ totalcost|floatformat:2 }}, // Ensure amount is in correct format
+          currency: "INR"
+        })
+      });
 
+      const order = await response.json();
 
-        }).render('#paypal-button-container');
-    </script>
+      const options = {
+        key: "YOUR_RAZORPAY_API_KEY", // Replace with your actual Razorpay API Key
+        amount: order.amount,
+        currency: order.currency,
+        name: "Your Store Name", // Replace with your store name
+        description: "Order Payment",
+        order_id: order.id,
+        handler: function(response) {
+          window.location.href = `/payment-success/?payment_id=${response.razorpay_payment_id}`;
+        },
+        theme: {
+          color: "#2a9d8f"
+        },
+        modal: {
+          ondismiss: function() {
+            hideLoading();
+          }
+        }
+      };
 
-{% endblock payment-gateway %}
+      const rzp = new Razorpay(options);
+      rzp.open();
+
+    } catch (error) {
+      console.error('Payment Error:', error);
+      alert('Payment failed. Please try again.');
+      hideLoading();
+    }
+  });
+
+  // PayPal Integration
+  paypal.Buttons({
+    style: {
+      color: 'gold',
+      shape: 'pill',
+      label: 'paypal',
+      height: 40
+    },
+    createOrder: function(data, actions) {
+      return actions.order.create({
+        purchase_units: [{
+          amount: {
+            value: '{{ totalcost|floatformat:2 }}' // Ensure amount is in correct format
+          }
+        }]
+      });
+    },
+    onApprove: function(data, actions) {
+      showLoading();
+      return actions.order.capture().then(function(details) {
+        document.getElementById("myform").submit();
+      });
+    },
+    onError: function(err) {
+      hideLoading();
+      console.error('PayPal Error:', err);
+      alert('Payment failed. Please try another method.');
+    }
+  }).render('#paypal-button-container');
+</script>
+{% endblock %}

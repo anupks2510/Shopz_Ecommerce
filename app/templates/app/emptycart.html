@@ -1,13 +1,165 @@
 {% extends 'app/base.html' %}
 {% load static %}
-{% block title %}Empty Cart{% endblock title %}
+{% block title %}Your Shopping Cart{% endblock title %}
+
+{% block extra_head %}
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+        --glass-bg: rgba(255, 255, 255, 0.1);
+    }
+
+    .empty-cart-container {
+        min-height: 100vh;
+        background: var(--primary-gradient);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .geometric-bg {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-image: 
+            radial-gradient(var(--glass-bg) 15%, transparent 15%),
+            radial-gradient(var(--glass-bg) 15%, transparent 15%);
+        background-size: 60px 60px;
+        background-position: 0 0, 30px 30px;
+        opacity: 0.15;
+    }
+
+    .cart-illustration {
+        width: 320px;
+        filter: drop-shadow(0 25px 50px rgba(0,0,0,0.15));
+        animation: float 6s ease-in-out infinite;
+    }
+
+    .content-box {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 2rem;
+        padding: 3rem;
+        transform: translateY(0);
+        transition: transform 0.3s ease;
+    }
+
+    .content-box:hover {
+        transform: translateY(-10px);
+    }
+
+    .cta-button {
+        background: var(--primary-gradient);
+        border: none;
+        padding: 1rem 2.5rem;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .cta-button span {
+        position: relative;
+        z-index: 2;
+    }
+
+    .cta-button::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 200%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            transparent 25%,
+            rgba(255,255,255,0.3) 50%,
+            transparent 75%
+        );
+        transition: left 0.6s;
+    }
+
+    .cta-button:hover::after {
+        left: 100%;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0) rotate(-2deg); }
+        50% { transform: translateY(-30px) rotate(2deg); }
+    }
+
+    .sparkle {
+        position: absolute;
+        background: rgba(255,255,255,0.6);
+        border-radius: 50%;
+        animation: sparkle 1.5s infinite;
+    }
+
+    @keyframes sparkle {
+        0% { transform: scale(0); opacity: 1; }
+        100% { transform: scale(3); opacity: 0; }
+    }
+</style>
+{% endblock %}
+
 {% block main-content %}
- <div class="container my-5">
-  <div class="row">
-   <h3 class="text-center">You have no Product in Your Cart</h3>
-   <div class="text-center">
-    <img src="{% static 'app/images/emptycart.png' %}" alt="" class="img-fluid img-thumbnail w-25">
-   </div>
-  </div>
- </div>
+<div class="empty-cart-container text-dark">
+    <div class="geometric-bg"></div>
+    
+    <div class="container h-100">
+        <div class="row h-100 align-items-center justify-content-center py-5">
+            <div class="col-lg-8 text-center position-relative">
+                <!-- Animated Sparkles -->
+                <div class="sparkle" style="top: 20%; left: 15%"></div>
+                <div class="sparkle" style="top: 70%; right: 10%; animation-delay: 0.5s"></div>
+                
+                <!-- Main Content -->
+                <div class="content-box">
+                    <div class="mb-5">
+                        <img src="{% static 'app/images/modern-cart.png' %}" 
+                             class="cart-illustration mb-4"
+                             alt="Empty Cart">
+                        <h1 class="display-5 fw-bold mb-3">
+                            <span class="text-gradient">Your Cart is Empty</span> 🛒
+                        </h1>
+                        <p class="lead mb-4 opacity-75">
+                            Discover our curated collection of premium products
+                        </p>
+                        
+                        <div class="d-flex justify-content-center gap-3">
+                            <a href="{% url 'home' %}" 
+                               class="cta-button btn btn-lg text-white rounded-pill">
+                                <span>Start Exploring →</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Category Suggestions -->
+                <div class="mt-4">
+                    <p class="text-muted mb-2">Popular Categories:</p>
+                    <div class="d-flex justify-content-center gap-2">
+                        <a href="#" class="badge bg-light text-dark px-3 py-2">New Arrivals</a>
+                        <a href="#" class="badge bg-light text-dark px-3 py-2">Best Sellers</a>
+                        <a href="#" class="badge bg-light text-dark px-3 py-2">Limited Edition</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Add random sparkles
+    function createSparkles() {
+        const container = document.querySelector('.empty-cart-container');
+        for(let i = 0; i < 5; i++) {
+            const sparkle = document.createElement('div');
+            sparkle.className = 'sparkle';
+            sparkle.style.left = Math.random() * 90 + '%';
+            sparkle.style.top = Math.random() * 90 + '%';
+            sparkle.style.animationDelay = Math.random() * 1 + 's';
+            container.appendChild(sparkle);
+        }
+    }
+    createSparkles();
+</script>
 {% endblock main-content %}

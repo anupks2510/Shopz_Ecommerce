@@ -1,110 +1,772 @@
 <!doctype html>
 {% load static %}
 <html lang="en">
-  <head>
-    <!-- Required meta tags -->
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="{% static 'app/images/logo1.png' %}">
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
-
-    <!--Owl Carousel CSS-->
+    <!-- Stylesheets -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link rel="stylesheet" href="{% static 'app/css/owl.carousel.min.css' %}">
-
-    <!--FontAwesome CSS-->
-    <link rel="stylesheet" href="{% static 'app/css/all.min.css' %}">
-
-    <!--Custom CSS-->
     <link rel="stylesheet" href="{% static 'app/css/style.css' %}">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Righteous&display=swap" rel="stylesheet">
 
+    <title>Shopz | {% block title %}{% endblock %}</title>
+    
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --accent-color: #f59e0b;
+        }
+    
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f8f9fa;
+        }
+    
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            padding: 0.5rem 0;
+        }
+    
+        /* Ultra-Compact Logo Styling */
+        .brand-logo {
+            width: 90px;  /* Reduced from 100px */
+            height: auto;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 8px;  /* Tighter radius */
+            padding: 5px;  /* Reduced padding */
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);  /* Thinner border */
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+            transform-origin: center;
+            animation: logoIntro 0.4s ease forwards;
+        }
+    
+        .brand-logo:hover {
+            transform: scale(1.03) translateY(-1px);
+            border-color: var(--accent-color);
+            box-shadow: 0 3px 18px rgba(245, 158, 11, 0.2);
+            background: rgba(255, 255, 255, 0.15);
+        }
+    
+        .navbar-brand {
+            max-width: 180px;  /* Tighter container */
+            position: relative;
+        }
+    
+        .navbar-brand:hover .brand-logo::after {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            right: -1px;
+            bottom: -1px;
+            background: linear-gradient(45deg, 
+                var(--primary-color), 
+                var(--accent-color), 
+                var(--secondary-color));
+            z-index: -1;
+            animation: rotateBorder 2s linear infinite;
+            border-radius: 8px;  /* Match logo radius */
+        }
+    
+        .brand-name {
+            font-family: 'Righteous', cursive;
+            font-size: 1.4rem;  /* Reduced from 1.5rem */
+            background: linear-gradient(45deg, #ff6b6b, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;  /* Tighter spacing */
+            margin-left: 0.4rem;  /* Reduced spacing */
+            transition: opacity 0.3s ease;
+        }
+    
+        .nav-link {
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 1.1rem !important;  /* Slightly tighter padding */
+        }
+    
+        .nav-link:hover {
+            transform: translateY(-1px);  /* Subtler hover */
+        }
+    
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);  /* Lighter shadow */
+            animation: slideDown 0.3s ease;
+            min-width: 220px;  /* Slightly narrower */
+        }
+    
+        .dropdown-item {
+            padding: 0.6rem 1.2rem;  /* Compact padding */
+            transition: all 0.2s ease;
+        }
+    
+        /* Animations */
+        @keyframes slideDown {
+            from { transform: translateY(-8px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    
+        @keyframes logoIntro {
+            0% { opacity: 0; transform: translateY(8px) scale(0.96); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+    
+        @keyframes rotateBorder {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    
+        @keyframes logoPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.015); }  /* More subtle pulse */
+            100% { transform: scale(1); }
+        }
+    
+        @media (prefers-reduced-motion: no-preference) {
+            .brand-logo {
+                animation: logoIntro 0.4s ease forwards, 
+                         logoPulse 7s ease infinite;  /* Slower pulse */
+            }
+        }
+    
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .brand-logo {
+                width: 70px;  /* Smaller mobile size */
+                padding: 3px;
+                border-radius: 6px;
+            }
+            .brand-name {
+                font-size: 1.1rem;  /* Smaller text */
+                margin-left: 0.25rem;
+            }
+            .navbar-brand {
+                max-width: 150px;  /* Compact container */
+            }
+        }
+    
+        .promo-banner {
+            background: linear-gradient(45deg, #3b82f6, #6366f1);
+            color: white;
+            padding: 0.4rem 0;  /* Tighter banner */
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
 
-    <title>Shopz | {% block title %} {% endblock title %} </title>
-  </head>
-  <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-     <div class="container">
-       <a class="navbar-brand" href="/">Shopz</a>
-       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-         <span class="navbar-toggler-icon"></span>
-       </button>
-       <div class="collapse navbar-collapse" id="navbarSupportedContent">
-         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-           <li class="nav-item">
-             <a class="nav-link active" aria-current="page" href="/">Home</a>
-           </li>
-           <li class="nav-item dropdown">
-             <a class="nav-link dropdown-toggle text-white" href="#" id="electronicsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-               Electronics
-             </a>
-             <ul class="dropdown-menu" aria-labelledby="electronicsDropdown">
-               <li><a class="dropdown-item" href="{% url 'mobile' %}">Mobile</a></li>
-               <li><a class="dropdown-item" href="#">Laptop</a></li>
-             </ul>
-           </li>
-           <li class="nav-item dropdown">
-             <a class="nav-link dropdown-toggle text-white" href="#" id="fashionDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-               Fashion
-             </a>
-             <ul class="dropdown-menu" aria-labelledby="fashionDropdown">
-               <li><a class="dropdown-item" href="#">Top Wear</a></li>
-               <li><a class="dropdown-item" href="#">Bottom Wear</a></li>
-             </ul>
-           </li>
-         </ul>
-         <form class="d-flex">
-           <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-           <button class="btn btn-warning" type="submit">S</button>
-         </form>
-         <div>
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          {% if request.user.is_authenticated %}
-           <li class="nav-item dropdown mx-2">
-              <a class="nav-link dropdown-toggle text-white" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                {{request.user.username|capfirst}}
-              </a>
-              <ul class="dropdown-menu" aria-labelledby="profileDropdown">
-                <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
-                <li><a class="dropdown-item" href="{% url 'orders' %}">Orders</a></li>
-                <li><a class="dropdown-item" href="{% url 'passwordchange' %}">Change Password</a></li>
-                <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
-              </ul>
+<body>
+    <!-- Promo Banner -->
+    <div class="promo-banner text-center">
+        🚚 Free Shipping on Orders Over ₹999 | ⏰ 24/7 Customer Support | 🔄 Easy Returns
+    </div>
+
+    <!-- Enhanced Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <!-- Logo and Brand Name -->
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <img src="{% static 'app/images/logo1.png' %}" alt="Shopz Logo" class="brand-logo">
+
+                <span class="brand-name d-none d-lg-block">SHOPZ</span>
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <!-- Electronics Dropdown -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-laptop me-1"></i> Electronics
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'mobile' %}"><i class="fas fa-mobile-alt me-2"></i>Smartphones</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-laptop me-2"></i>Laptops</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-headphones me-2"></i>Audio Devices</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Fashion Dropdown -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-tshirt me-1"></i> Fashion
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-tshirt me-2"></i>Men's Wear</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-female me-2"></i>Women's Wear</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-shoe-prints me-2"></i>Footwear</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Home & Living Dropdown -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-home me-1"></i> Home
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-couch me-2"></i>Furniture</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-blender me-2"></i>Kitchenware</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Books Link -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-book me-1"></i> Books
+                        </a>
+                    </li>
+                </ul>
+
+<!-- Auth Section -->
+<div class="d-flex gap-2 ms-auto">
+    {% if user.is_authenticated %}
+    <li class="nav-item dropdown">
+        <a class="btn btn-light dropdown-toggle" href="#" role="button" 
+           id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-user-circle me-2"></i>{{ user.username|truncatechars:12 }}
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+            <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="fas fa-user-cog me-2"></i>Profile</a></li>
+            <li><a class="dropdown-item" href="{% url 'orders' %}"><i class="fas fa-box me-2"></i>Orders</a></li>
+            <li><a class="dropdown-item" href="{% url 'passwordchange' %}"><i class="fas fa-lock me-2"></i>Change Password</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="dropdown-item text-danger w-100 text-start">
+                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                    </button>
+                </form>
             </li>
-            <li class="nav-item mx-2">
-              <a href="{% url 'showcart' %}" class="nav-link text-white"><span class="badge bg-danger">{{totalitem}}</span> Cart </a>
-            </li>
-            {% else %}
-            <li class="nav-item mx-2">
-             <a href="{% url 'login' %}" class="nav-link text-white">Login</a>
-            </li>
-            <li class="nav-item mx-2">
-             <a href="{% url 'customerregistration' %}" class="nav-link text-white">Registration</a>
-            </li>
-            {% endif %}
-          </ul>
-         </div>
-       </div>
-     </div>
+        </ul>
+    </li>  <!-- Closing li tag here -->
+   
+
+    <a href="{% url 'showcart' %}" class="btn btn-light position-relative">
+        <i class="fas fa-shopping-cart"></i>
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+            {{ totalitem }}
+            <span class="visually-hidden">items in cart</span>
+        </span>
+    </a>
+    {% else %}
+    <a href="{% url 'login' %}" class="btn btn-outline-light">
+        <i class="fas fa-sign-in-alt me-2"></i>Login
+    </a>
+    <a href="{% url 'customerregistration' %}" class="btn btn-light">
+        <i class="fas fa-user-plus me-2"></i>Register
+    </a>
+    {% endif %}
+</div>
+            </div>
+        </div>
     </nav>
-    {% block banner_slider %} {% endblock banner_slider %}
-    {% block livesale %} {% endblock livesale %}
-    {% block main-content %} {% endblock main-content %}
 
-    {% block payment-gateway %} {% endblock payment-gateway %}
+    <!-- Main Content -->
+    <main class="mt-5 pt-4">
+        {% block banner_slider %}{% endblock %}
+        {% block livesale %}{% endblock %}
+        {% block main-content %}{% endblock %}
+        {% block payment-gateway %}{% endblock %}
+    </main>
 
-    <!-- Start Footer -->
-    <footer class="container-fluid bg-dark text-center p-2 mt-5">
-        <small class="text-white">Copyright &copy; 2025 || Designed By Piyush Panda and Team || </small>
-        <img src="{% static 'app/images/payment.png' %}" alt="" srcset="" class="img-fluid" height="2px">
-    </footer> <!-- End Footer -->
+  
+<!-- Footer -->
+<footer class="bg-dark text-white py-5 mt-5">
+  <!-- Customer Reviews Section -->
+<div class="row g-4 animate-on-scroll" id="reviews">
+  <h3 class="footer-heading text-center mb-5">🌟 Customer Voices</h3>
+  
+  <!-- Review 1 -->
+  <div class="col-md-4">
+      <div class="review-card p-4 mb-4 hover-float">
+          <div class="review-rating text-warning mb-2">
+              <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+          </div>
+          <p class="footer-text">"Best online shopping experience! My saree arrived faster than expected. Quality exceeded my expectations."</p>
+          <div class="review-author mt-3">
+              <h6 class="text-accent">Priya Sharma</h6>
+              <small class="text-muted">Mumbai, Maharashtra</small>
+              <div class="contact-small mt-1">
+                  <a href="mailto:priya.s@example.com" class="footer-link small">priya.s@example.com</a><br>
+                  <a href="tel:+919876543210" class="footer-link small">+91 98765 43210</a>
+              </div>
+          </div>
+      </div>
+  </div>
 
-    <!-- Jquery -->
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
-    <!-- Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+  <!-- Review 2 -->
+  <div class="col-md-4">
+      <div class="review-card p-4 mb-4 hover-float">
+          <div class="review-rating text-warning mb-2">
+              <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+          </div>
+          <p class="footer-text">"Excellent customer service helped exchange wrong size shoes without any hassle."</p>
+          <div class="review-author mt-3">
+              <h6 class="text-accent">Rajesh Kumar</h6>
+              <small class="text-muted">Patna, Bihar</small>
+              <div class="contact-small mt-1">
+                  <a href="mailto:rajesh.k@example.com" class="footer-link small">rajesh.k@example.com</a><br>
+                  <a href="tel:+919712345678" class="footer-link small">+91 97123 45678</a>
+              </div>
+          </div>
+      </div>
+  </div>
 
-    <script src="{% static 'app/js/owl.carousel.min.js' %}"></script>
-    <script src="{% static 'app/js/all.min.js' %}"></script>
-    <script src="{% static 'app/js/myscript.js' %}"></script>
-  </body>
+  <!-- Review 3 -->
+  <div class="col-md-4">
+      <div class="review-card p-4 mb-4 hover-float">
+          <div class="review-rating text-warning mb-2">
+              <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+          </div>
+          <p class="footer-text">"Authentic products at best prices! My go-to app for electronic accessories."</p>
+          <div class="review-author mt-3">
+              <h6 class="text-accent">Arjun Mehta</h6>
+              <small class="text-muted">Ahmedabad, Gujarat</small>
+              <div class="contact-small mt-1">
+                  <a href="mailto:arjun.m@example.com" class="footer-link small">arjun.m@example.com</a><br>
+                  <a href="tel:+919887766554" class="footer-link small">+91 98877 66554</a>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <!-- Review 4 -->
+  <div class="col-md-4">
+      <div class="review-card p-4 mb-4 hover-float">
+          <div class="review-rating text-warning mb-2">
+              <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+          </div>
+          <p class="footer-text">"Fast delivery to my remote Assam village. Secure professional packaging."</p>
+          <div class="review-author mt-3">
+              <h6 class="text-accent">Ananya Das</h6>
+              <small class="text-muted">Guwahati, Assam</small>
+              <div class="contact-small mt-1">
+                  <a href="mailto:ananya.d@example.com" class="footer-link small">ananya.d@example.com</a><br>
+                  <a href="tel:+919731234567" class="footer-link small">+91 97312 34567</a>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <!-- Review 5 -->
+  <div class="col-md-4">
+      <div class="review-card p-4 mb-4 hover-float">
+          <div class="review-rating text-warning mb-2">
+              <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+          </div>
+          <p class="footer-text">"Perfect traditional jewelry for weddings. Exceeded all expectations!"</p>
+          <div class="review-author mt-3">
+              <h6 class="text-accent">Neha Gupta</h6>
+              <small class="text-muted">Jaipur, Rajasthan</small>
+              <div class="contact-small mt-1">
+                  <a href="mailto:neha.g@example.com" class="footer-link small">neha.g@example.com</a><br>
+                  <a href="tel:+919892345678" class="footer-link small">+91 98923 45678</a>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <!-- Review 6 -->
+  <div class="col-md-4">
+      <div class="review-card p-4 mb-4 hover-float">
+          <div class="review-rating text-warning mb-2">
+              <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+          </div>
+          <p class="footer-text">"Authentic spices made my biryani perfect! Fast Hyderabad delivery."</p>
+          <div class="review-author mt-3">
+              <h6 class="text-accent">Mohammed Irfan</h6>
+              <small class="text-muted">Hyderabad, Telangana</small>
+              <div class="contact-small mt-1">
+                  <a href="mailto:mirfan@example.com" class="footer-link small">mirfan@example.com</a><br>
+                  <a href="tel:+919912345670" class="footer-link small">+91 99123 45670</a>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <!-- Review 7 -->
+  <div class="col-md-4">
+      <div class="review-card p-4 mb-4 hover-float">
+          <div class="review-rating text-warning mb-2">
+              <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+          </div>
+          <p class="footer-text">"Genuine Ayurvedic products with perfect Kerala delivery. Impressive!"</p>
+          <div class="review-author mt-3">
+              <h6 class="text-accent">Ravi Varma</h6>
+              <small class="text-muted">Thiruvananthapuram, Kerala</small>
+              <div class="contact-small mt-1">
+                  <a href="mailto:ravi.v@example.com" class="footer-link small">ravi.v@example.com</a><br>
+                  <a href="tel:+919444455555" class="footer-link small">+91 94444 55555</a>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <!-- Review 8 -->
+  <div class="col-md-4">
+      <div class="review-card p-4 mb-4 hover-float">
+          <div class="review-rating text-warning mb-2">
+              <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+          </div>
+          <p class="footer-text">"Traditional utensils arrived in 3 days to Visakhapatnam. Perfect!"</p>
+          <div class="review-author mt-3">
+              <h6 class="text-accent">Sunita Reddy</h6>
+              <small class="text-muted">Visakhapatnam, Andhra Pradesh</small>
+              <div class="contact-small mt-1">
+                  <a href="mailto:sunita.r@example.com" class="footer-link small">sunita.r@example.com</a><br>
+                  <a href="tel:+919666677777" class="footer-link small">+91 96666 77777</a>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <!-- Review 9 -->
+  <div class="col-md-4">
+      <div class="review-card p-4 mb-4 hover-float">
+          <div class="review-rating text-warning mb-2">
+              <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+          </div>
+          <p class="footer-text">"Best smartphone prices! Lucknow delivery in 48 hours flat."</p>
+          <div class="review-author mt-3">
+              <h6 class="text-accent">Amit Singh</h6>
+              <small class="text-muted">Lucknow, Uttar Pradesh</small>
+              <div class="contact-small mt-1">
+                  <a href="mailto:amit.s@example.com" class="footer-link small">amit.s@example.com</a><br>
+                  <a href="tel:+919555544444" class="footer-link small">+91 95555 44444</a>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <!-- Review 10 -->
+  <div class="col-md-4">
+      <div class="review-card p-4 mb-4 hover-float">
+          <div class="review-rating text-warning mb-2">
+              <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+          </div>
+          <p class="footer-text">"Fresh Bengali sweets made our Durga Puja celebrations special!"</p>
+          <div class="review-author mt-3">
+              <h6 class="text-accent">Kavita Choudhary</h6>
+              <small class="text-muted">Kolkata, West Bengal</small>
+              <div class="contact-small mt-1">
+                  <a href="mailto:kavita.c@example.com" class="footer-link small">kavita.c@example.com</a><br>
+                  <a href="tel:+919333322222" class="footer-link small">+91 93333 22222</a>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+<!-- Footer -->
+<footer class="bg-dark text-white py-5 mt-5">
+  <div class="container">
+      <!-- Customer Reviews Section (Added) -->
+      <div class="row g-4 animate-on-scroll" id="reviews">
+          <!-- Include previous 10 reviews here -->
+      </div>
+
+      <!-- Main Footer Content -->
+      <div class="row g-5">
+          <!-- Company Info -->
+          <div class="col-md-4 animate-on-scroll">
+              <img src="{% static 'app/images/logo1.png' %}" alt="Shopz Logo" class="brand-logo mb-3 hover-pulse" style="height: px;">
+              <p class="footer-text">India's fastest-growing e-commerce platform serving 2M+ customers since 2020 with 98% satisfaction rate.</p>
+              <div class="social-icons mt-4">
+                  <a href="#" class="social-icon"><i class="fab fa-facebook fa-lg"></i></a>
+                  <a href="#" class="social-icon"><i class="fab fa-instagram fa-lg"></i></a>
+                  <a href="#" class="social-icon"><i class="fab fa-twitter fa-lg"></i></a>
+                  <a href="#" class="social-icon"><i class="fab fa-linkedin fa-lg"></i></a>
+              </div>
+          </div>
+
+          <!-- Customer Service -->
+          <div class="col-md-2 animate-on-scroll" style="animation-delay: 0.2s;">
+              <h5 class="mb-4 footer-heading">Customer Service</h5>
+              <ul class="list-unstyled">
+                  <li class="mb-2"><a href="#faq" class="footer-link hover-grow">FAQ</a></li>
+                  <li class="mb-2"><a href="#tracking" class="footer-link hover-grow">Order Tracking</a></li>
+                  <li class="mb-2"><a href="#returns" class="footer-link hover-grow">Returns & Exchanges</a></li>
+              </ul>
+          </div>
+
+          <!-- Legal -->
+          <div class="col-md-2 animate-on-scroll" style="animation-delay: 0.4s;">
+              <h5 class="mb-4 footer-heading">Legal</h5>
+              <ul class="list-unstyled">
+                  <li class="mb-2"><a href="#privacy" class="footer-link hover-grow">Privacy Policy</a></li>
+                  <li class="mb-2"><a href="#terms" class="footer-link hover-grow">Terms of Service</a></li>
+                  <li class="mb-2"><a href="#cookies" class="footer-link hover-grow">Cookie Policy</a></li>
+              </ul>
+          </div>
+
+          <!-- Contact Information -->
+          <div class="col-md-4 animate-on-scroll" style="animation-delay: 0.6s;">
+              <h5 class="mb-4 footer-heading">Contact Us</h5>
+              <ul class="list-unstyled contact-info">
+                  <li class="mb-3 contact-item">
+                      <i class="fas fa-map-marker-alt me-2"></i>
+                      <span class="footer-text">E-42, Techzone Plaza, Andheri East, Mumbai 400069</span>
+                  </li>
+                  <li class="mb-3 contact-item">
+                      <i class="fas fa-phone me-2"></i>
+                      <a href="tel:+912212345678" class="footer-link">+91 22 1234 5678</a>
+                  </li>
+                  <li class="mb-3 contact-item">
+                      <i class="fas fa-envelope me-2"></i>
+                      <a href="mailto:support@shopz.in" class="footer-link">care@shopz.in</a>
+                  </li>
+              </ul>
+
+              <!-- Newsletter -->
+              <div class="newsletter mt-4">
+                  <h6 class="text-white mb-3 footer-heading">Get Exclusive Offers</h6>
+                  <div class="input-group newsletter-box">
+                      <input type="email" class="form-control" placeholder="Enter your email">
+                      <button class="btn btn-primary" type="button">
+                          <i class="fas fa-paper-plane"></i>
+                      </button>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+      <!-- Policy Content Sections -->
+      <div class="mt-5 policy-content animate-on-scroll">
+          <!-- FAQ Section -->
+          <div id="faq" class="policy-section">
+              <h3 class="footer-heading mb-4">❓ Frequently Asked Questions</h3>
+              <div class="footer-text">
+                  <div class="accordion-item mb-4">
+                      <h4 class="accordion-header">
+                          <button class="accordion-button footer-heading" type="button">
+                              What's your delivery coverage?
+                          </button>
+                      </h4>
+                      <div class="accordion-collapse show">
+                          <div class="accordion-body">
+                              We deliver to 25,000+ pincodes across India. Enter your pincode during checkout to verify availability.
+                          </div>
+                      </div>
+                  </div>
+
+                  <div class="accordion-item mb-4">
+                      <h4 class="accordion-header">
+                          <button class="accordion-button footer-heading" type="button">
+                              How do returns work?
+                          </button>
+                      </h4>
+                      <div class="accordion-collapse">
+                          <div class="accordion-body">
+                              Initiate returns within 14 days of delivery. Our team will schedule free pickup within 48 hours.
+                          </div>
+                      </div>
+                  </div>
+
+                  <div class="accordion-item mb-4">
+                      <h4 class="accordion-header">
+                          <button class="accordion-button footer-heading" type="button">
+                              Do you offer international shipping?
+                          </button>
+                      </h4>
+                      <div class="accordion-collapse">
+                          <div class="accordion-body">
+                              Currently we only ship within India. International shipping coming in 2026!
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+          <!-- Privacy Policy -->
+          <div id="privacy" class="policy-section mt-5">
+              <h3 class="footer-heading mb-4">🔐 Privacy Commitment</h3>
+              <div class="footer-text">
+                  <p>We implement military-grade 256-bit SSL encryption for all transactions. Customer data is stored in ISO-certified servers with biometric access controls.</p>
+                  <h5 class="mt-4 text-accent">Data Usage</h5>
+                  <p>Your data helps us improve services and personalize experiences. We never sell information to third parties.</p>
+              </div>
+          </div>
+
+          <!-- Terms of Service -->
+          <div id="terms" class="policy-section mt-5">
+              <h3 class="footer-heading mb-4">⚖️ Terms & Conditions</h3>
+              <div class="footer-text">
+                  <p>By using Shopz, you agree to our fair usage policy. We reserve the right to refuse service to accounts showing fraudulent activity.</p>
+                  <h5 class="mt-4 text-accent">Pricing</h5>
+                  <p>All prices include GST. Product availability and prices are subject to change without notice.</p>
+              </div>
+          </div>
+
+          <!-- Cookie Policy -->
+          <div id="cookies" class="policy-section mt-5">
+              <h3 class="footer-heading mb-4">🍪 Cookie Policy</h3>
+              <div class="footer-text">
+                  <p>We use essential cookies for site functionality. You can manage preferences through your browser settings.</p>
+                  <h5 class="mt-4 text-accent">Cookie Types</h5>
+                  <ul>
+                      <li>Session Cookies - Maintain your shopping cart</li>
+                      <li>Preference Cookies - Remember language settings</li>
+                  </ul>
+              </div>
+          </div>
+
+          <!-- Returns Policy -->
+          <div id="returns" class="policy-section mt-5">
+              <h3 class="footer-heading mb-4">🔄 Returns & Exchanges</h3>
+              <div class="footer-text">
+                  <p>Not satisfied? Return eligible items within 14 days for full refund. Items must be unopened with original packaging.</p>
+                  <h5 class="mt-4 text-accent">Process</h5>
+                  <ol>
+                      <li>Initiate return in your account</li>
+                      <li>Print return label</li>
+                      <li>Wait for pickup confirmation</li>
+                  </ol>
+              </div>
+          </div>
+      </div>
+
+      <!-- Payment & Security Section -->
+      <div class="row mt-5 animate-on-scroll">
+          <div class="col-md-6">
+              <h6 class="text-white mb-3 footer-heading">Trusted Payments</h6>
+              <div class="d-flex gap-3 align-items-center payment-methods">
+                  <img src="{% static 'app/images/payment.png' %}" alt="Payment methods" 
+                       class="img-fluid payment-icon hover-float" style="max-width: 300px;">
+              </div>
+          </div>
+          
+          <div class="col-md-6 text-md-end mt-4 mt-md-0">
+              <h6 class="text-white mb-3 footer-heading">100% Secure</h6>
+              <div class="d-flex gap-3 justify-content-md-end">
+                  <div class="badge bg-light text-dark p-2 security-badge hover-pulse">
+                      <i class="fas fa-shield-alt me-2"></i>PCI DSS Compliant
+                  </div>
+                  <div class="badge bg-light text-dark p-2 security-badge hover-pulse">
+                      <i class="fas fa-lock me-2"></i>SSL Secured
+                  </div>
+              </div>
+          </div>
+      </div>
+
+      <!-- Copyright -->
+      <div class="border-top pt-4 mt-4 text-center animate-on-scroll" style="animation-delay: 1.2s;">
+          <small class="footer-text d-block mb-2">
+              © 2025 Shopz. All rights reserved | Crafted with <i class="fas fa-heart text-danger heartbeat"></i> by Piyush's Team
+              <br>Part of Retail Excellence Group | GSTIN: 27ABCDE1234F1Z2
+          </small>
+      </div>
+  </div>
+</footer>
+
+<style>
+  /* Combined Styles */
+  .footer-heading {
+      font-family: 'Righteous', cursive;
+      color: var(--accent-color) !important;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+
+  .review-card {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      border: 1px solid rgba(255,255,255,0.1);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .review-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+  }
+
+  .policy-section {
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 15px;
+      padding: 2rem;
+      margin: 2rem 0;
+  }
+
+  .hover-float {
+      transition: all 0.3s ease;
+  }
+
+  .hover-float:hover {
+      transform: translateY(-5px);
+  }
+
+  .hover-pulse {
+      animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+  }
+
+  .contact-item:hover {
+      transform: translateX(10px);
+  }
+
+  .text-accent {
+      color: var(--accent-color);
+  }
+</style>
+
+<script>
+  // Combined Scripts
+  document.addEventListener('DOMContentLoaded', function() {
+      // Scroll Animations
+      const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                  entry.target.classList.add('visible');
+              }
+          });
+      }, { threshold: 0.1 });
+
+      document.querySelectorAll('.animate-on-scroll').forEach(element => {
+          observer.observe(element);
+      });
+
+      // Tooltips
+      const contactLinks = document.querySelectorAll('.contact-small a');
+      contactLinks.forEach(link => {
+          new bootstrap.Tooltip(link, {
+              placement: 'top',
+              title: 'Sample contact for demonstration only'
+          });
+      });
+
+      // Smooth Scroll
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+          anchor.addEventListener('click', function(e) {
+              e.preventDefault();
+              const target = document.querySelector(this.getAttribute('href'));
+              if(target) {
+                  target.scrollIntoView({
+                      behavior: 'smooth',
+                      block: 'start'
+                  });
+              }
+          });
+      });
+  });
+</script>
+<!-- Add this right before closing </body> tag -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>

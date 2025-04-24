@@ -3,8 +3,9 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 import requests
 
-# DeepSeek API Key
-DEEPSEEK_API_KEY = "your_deepseek_api_key_here"
+# DeepSeek API Key – FOR TESTING ONLY. Use env vars for production.
+DEEPSEEK_API_KEY = "api-key-here"  # Replace with your actual API key
+# Note: In production, use environment variables or a secure vault to store sensitive information like API keys.
 
 # Expanded Predefined Responses Dictionary
 predefined_responses = {
@@ -48,29 +49,32 @@ def chatbot_response(request):
             data = json.loads(request.body)
             user_message = data.get("message", "").strip().lower()
 
-            # Check predefined responses using dictionary lookup
+            # Check predefined responses
             response = predefined_responses.get(user_message)
             if response:
                 return JsonResponse({"response": response})
 
-            # If no predefined response, try DeepSeek API
+            # If not predefined, query DeepSeek
             deepseek_response = get_deepseek_response(user_message)
             return JsonResponse({"response": deepseek_response})
-        
+
         except json.JSONDecodeError:
             return JsonResponse({"response": "Invalid request format."}, status=400)
-    
+
     return JsonResponse({"error": "Invalid request method."}, status=400)
 
 
 def get_deepseek_response(query):
     """
-    Fetch response from DeepSeek API when no predefined response exists.
+    Calls DeepSeek API to get response for the given query.
     """
-    url = "https://api.deepseek.com/chat"
-    headers = {"Authorization": f"Bearer {DEEPSEEK_API_KEY}"}
+    url = "https://api.deepseek.com/v1/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {DEEPSEEK_API_KEY}",
+        "Content-Type": "application/json"
+    }
     payload = {
-        "model": "deepseek-llm",
+        "model": "deepseek-chat",
         "messages": [{"role": "user", "content": query}],
         "temperature": 0.7
     }
@@ -78,8 +82,9 @@ def get_deepseek_response(query):
     try:
         response = requests.post(url, headers=headers, json=payload)
         if response.status_code == 200:
-            return response.json().get("response", "Sorry, I couldn't process your request.")
+            completion = response.json()
+            return completion.get("choices", [{}])[0].get("message", {}).get("content", "No response received.")
         else:
-            return "Sorry, the AI service is currently unavailable. Please try again later."
-    except requests.exceptions.RequestException:
-        return "I'm currently unable to reach the AI assistant. Please try again later."
+            return f"DeepSeek API error: {response.status_code} - {response.text}"
+    except requests.exceptions.RequestException as e:
+        return f"Request failed: {str(e)}"

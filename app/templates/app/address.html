@@ -1,34 +1,76 @@
 {% extends 'app/base.html' %}
 {% load static %}
-{% block title %}Address{% endblock title %}
+{% block title %}Your Addresses{% endblock title %}
 {% block main-content %}
 <div class="container my-5">
- <div class="row">
- <h3>Welcome <span class="text-capitalize">{{request.user}}</span></h3>
-  <div class="col-sm-2 border-end">
-   <ul class="list-unstyled">
-    <li class="d-grid"><a href="{% url 'profile' %}" class="btn">Profile</a></li>
-    <li class="d-grid"><a href="{% url 'address' %}" class="btn {{active}}">Address</a></li>
-   </ul>
-  </div>
-  <div class="col-sm-9 offset-sm-1">
-   <div class="row">
-    {% for ad in add %}
-     <div class="col-sm-6">
-     <div class="card">
-      <div class="card-body">
-       <h3>Address: {{ forloop.counter }}</h3>
-       <p>Name: {{ad.name}}</p>
-       <p>Locality: {{ad.locality}}</p>
-       <p>City: {{ad.city}}</p>
-       <p>State: {{ad.state}}</p>
-       <p>Pin Code: {{ad.zipcode}}</p>
-      </div>
-     </div>
+    <div class="row">
+        <div class="col-12">
+            <h3 class="mb-4">
+                Welcome,
+                <span class="text-capitalize">
+                    {% if request.user.is_authenticated %}
+                        {{ request.user.username }}
+                    {% else %}
+                        Guest
+                    {% endif %}
+                </span>
+            </h3>
+        </div>
+        <div class="col-md-3 border-end">
+            <ul class="list-unstyled">
+                <li class="nav-item">
+                    <a href="{% url 'profile' %}" class="nav-link">
+                        Profile
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'address' %}" class="nav-link {{ active }}">
+                        Addresses
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-9">
+            <div class="row">
+                {% if add %}
+                    {% for ad in add %}
+                        <div class="col-sm-6 mb-4">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h4 class="card-title">Address: {{ forloop.counter }}</h4>
+                                    <p class="card-text">
+                                        <span class="font-weight-bold">Name:</span>
+                                        {{ ad.name }}
+                                    </p>
+                                    <p class="card-text">
+                                        <span class="font-weight-bold">Locality:</span>
+                                        {{ ad.locality }}
+                                    </p>
+                                    <p class="card-text">
+                                        <span class="font-weight-bold">City:</span>
+                                        {{ ad.city }}
+                                    </p>
+                                    <p class="card-text">
+                                        <span class="font-weight-bold">State:</span>
+                                        {{ ad.state }}
+                                    </p>
+                                    <p class="card-text">
+                                        <span class="font-weight-bold">Pin Code:</span>
+                                        {{ ad.zipcode }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="col-12">
+                        <div class="alert alert-info" role="alert">
+                            No addresses found.
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
     </div>
-    {% endfor %}
-   </div>
-  </div>
- </div>
 </div>
 {% endblock main-content %}

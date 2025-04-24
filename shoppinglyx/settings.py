@@ -11,10 +11,10 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
@@ -26,7 +26,6 @@ SECRET_KEY = 'm7757tfa4t=!#52_m1g6n8h(5_5-2@r8q$_3js367+0!4$d%-*'
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -71,7 +70,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'shoppinglyx.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
@@ -81,7 +79,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -101,7 +98,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
@@ -115,14 +111,28 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    BASE_DIR / "static",  # Pathlib style directory declaration
+]
+STATIC_ROOT = BASE_DIR / "staticfiles"  # For production collection
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# Login/Logout redirects
 LOGIN_REDIRECT_URL = '/profile/'
+LOGOUT_REDIRECT_URL = 'home'
+
+# Email backend (development only)
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+# Session configuration
 SESSION_ENGINE = "django.contrib.sessions.backends.db"
+
+# Razorpay configuration (replace with your actual keys)
+RAZORPAY_KEY_ID = 'your_key_here'
+RAZORPAY_KEY_SECRET = 'your_secret_here'

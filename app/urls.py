@@ -1,4 +1,8 @@
+
+# app/urls.py
 from django.urls import path
+from .views import show_cart
+from .views import plus_cart, minus_cart, remove_cart
 from app import views
 from django.conf import settings
 from django.conf.urls.static import static
@@ -7,7 +11,10 @@ from .forms import LoginForm, MyPasswordChangeForm, MyPasswordResetForm, MySetPa
 urlpatterns = [
     # path('', views.home),
    
-    
+    path('pluscart/', plus_cart, name='pluscart'),
+    path('minuscart/', minus_cart, name='minuscart'),
+    path('removecart/', remove_cart, name='removecart'),
+    path('cart/', show_cart, name='cart'),
     path('', views.ProductView.as_view(), name="home"),
     # path('product-detail', views.product_detail, name='product-detail'),
     path('product-detail/<int:pk>/', views.ProductDetailView.as_view(), name='product-detail'),
@@ -36,8 +43,10 @@ urlpatterns = [
     path("password-reset-confirm/<uidb64>/<token>/", auth_views.PasswordResetConfirmView.as_view(template_name='app/password_reset_confirm.html', form_class=MySetPasswordForm), name="password_reset_confirm"),
     path("password-reset-complete/", auth_views.PasswordResetCompleteView.as_view(template_name='app/password_reset_complete.html'), name="password_reset_complete"),
 
-    path('registration/', views.CustomerRegistrationView.as_view(), name='customerregistration')
+    path('registration/', views.CustomerRegistrationView.as_view(), name='customerregistration'),
+    path('create-razorpay-order/', views.create_razorpay_order, name='create_razorpay_order'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
 
 
 

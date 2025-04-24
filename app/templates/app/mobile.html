@@ -2,32 +2,110 @@
 {% load static %}
 {% block title %}Mobile{% endblock title %}
 {% block main-content %}
+
+<style>
+    .category-box {
+        background: #f8f9fa;
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+    .product-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: none;
+        border-radius: 15px;
+        overflow: hidden;
+    }
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    .product-img {
+        transition: transform 0.3s ease;
+        height: 250px;
+        object-fit: contain;
+        padding: 15px;
+    }
+    .product-card:hover .product-img {
+        transform: scale(1.05);
+    }
+    .price-badge {
+        background: #28a745;
+        color: white;
+        padding: 5px 15px;
+        border-radius: 25px;
+        font-size: 0.9em;
+    }
+    .original-price {
+        color: #6c757d;
+        text-decoration: line-through;
+    }
+    .category-link {
+        color: #495057;
+        transition: all 0.3s ease;
+        border-radius: 10px;
+        margin: 5px 0;
+    }
+    .category-link:hover {
+        background: #007bff;
+        color: white !important;
+        transform: translateX(5px);
+    }
+</style>
+
 <div class="container my-5">
- <div class="row">
-  <div class="col-sm-3">
-   <div class="list-group">
-     <a href="{% url 'mobile' %}" class="list-group-item list-group-item-action" aria-current="true">All Mobile</a>
-     <a href="{% url 'mobiledata' 'Redmi'  %}" class="list-group-item list-group-item-action" aria-current="true">Redmi</a>
-     <a href="{% url 'mobiledata' 'Samsung'  %}" class="list-group-item list-group-item-action">Samsung</a>
-     <a href="{% url 'mobiledata' 'below'  %}" class="list-group-item list-group-item-action">Below 10000</a>
-     <a href="{% url 'mobiledata' 'above'  %}" class="list-group-item list-group-item-action">Above 10000</a>
-   </div>
-  </div>
-  <div class="col-sm-8">
-   <div class="row">
-    {% for product in mobiles %}
-     <div class="col-sm-4 text-center mb-4">
-      <a href="{% url 'product-detail' product.id %}" class="btn">
-       <div class="item">
-        <img src="{{product.product_image.url}}" alt="" height="300" class="">
-        <div class="fw-bold">{{product.title}}</div>
-        <div class="fw-bold">Rs. {{product.discounted_price}} <small class="fw-light text-decoration-line-through">{{product.selling_price}}</small></div>
-       </div>
-      </a>
-     </div>
-    {% endfor %}
-   </div>
-  </div>
- </div>
+    <div class="row">
+        <!-- Categories Section -->
+        <div class="col-lg-3 mb-4">
+            <div class="category-box p-3">
+                <h4 class="mb-3 text-primary">Filter By</h4>
+                <div class="list-group">
+                    <a href="{% url 'mobile' %}" class="list-group-item list-group-item-action category-link d-flex align-items-center">
+                        <span class="flex-grow-1">All Mobile</span>
+                        <i class="fas fa-chevron-right fa-xs"></i>
+                    </a>
+                    <a href="{% url 'mobiledata' 'Redmi'  %}" class="list-group-item list-group-item-action category-link d-flex align-items-center">
+                        <span class="flex-grow-1">Redmi</span>
+                        <i class="fas fa-chevron-right fa-xs"></i>
+                    </a>
+                    <a href="{% url 'mobiledata' 'Samsung'  %}" class="list-group-item list-group-item-action category-link d-flex align-items-center">
+                        <span class="flex-grow-1">Samsung</span>
+                        <i class="fas fa-chevron-right fa-xs"></i>
+                    </a>
+                    <a href="{% url 'mobiledata' 'below'  %}" class="list-group-item list-group-item-action category-link d-flex align-items-center">
+                        <span class="flex-grow-1">Below ₹10k</span>
+                        <i class="fas fa-chevron-right fa-xs"></i>
+                    </a>
+                    <a href="{% url 'mobiledata' 'above'  %}" class="list-group-item list-group-item-action category-link d-flex align-items-center">
+                        <span class="flex-grow-1">Above ₹10k</span>
+                        <i class="fas fa-chevron-right fa-xs"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products Section -->
+        <div class="col-lg-9">
+            <div class="row g-4">
+                {% for product in mobiles %}
+                <div class="col-md-6 col-xl-4">
+                    <div class="product-card h-100 p-3">
+                        <a href="{% url 'product-detail' product.id %}" class="text-decoration-none text-dark">
+                            <div class="position-relative">
+                                <img src="{{product.product_image.url}}" alt="{{product.title}}" class="img-fluid product-img">
+                            </div>
+                            <div class="card-body px-0 pb-0">
+                                <h5 class="card-title fw-bold mb-2">{{product.title}}</h5>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="price-badge">₹{{product.discounted_price}}</span>
+                                    <small class="original-price">₹{{product.selling_price}}</small>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock main-content %}
