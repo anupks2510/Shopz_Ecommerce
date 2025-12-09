@@ -4,7 +4,7 @@ import json
 import requests
 
 # DeepSeek API Key – FOR TESTING ONLY. Use env vars for production.
-DEEPSEEK_API_KEY = "api-key-here"  # Replace with your actual API key
+DEEPSEEK_API_KEY = ""  # Replace with your actual API key
 # Note: In production, use environment variables or a secure vault to store sensitive information like API keys.
 
 # Expanded Predefined Responses Dictionary
